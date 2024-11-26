@@ -27,7 +27,7 @@ public class User {
     private String email;
 
     @Column(name = "phone_number")
-    private String phoenNumber;
+    private String phoneNumber;
 
     @Column(name = "address", length = 200)
     private String address;
