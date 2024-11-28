@@ -33,11 +33,8 @@ public class Product extends BaseEntity{
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "brand_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Product_Brand"))
-    private Brand brand;
 
 }

@@ -13,11 +13,8 @@ public enum ErrorCode {
     INVALID_KEY(1001,"Invalid key", HttpStatus.BAD_REQUEST),
 
     CATEGORY_NAME_INVALID(1008, "Category's name cannot be empty", HttpStatus.BAD_REQUEST),
-    BRAND_NAME_INVALID(1035, "Category's name cannot be empty", HttpStatus.BAD_REQUEST),
     CATEGORY_EXISTED(1009, "Category exitsted", HttpStatus.BAD_REQUEST),
-    BRAND_EXISTED(1036, "Category exitsted", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_EXISTED(1010, "Category not found", HttpStatus.NOT_FOUND),
-    BRAND_NOT_EXISTED(1010, "Category not found", HttpStatus.NOT_FOUND),
 
     PRODUCT_NAME_INVALID(1020, "Product name is required", HttpStatus.BAD_REQUEST),
     PRODUCT_PRICE_INVALID(1021, "Product price must be >= 0", HttpStatus.BAD_REQUEST),

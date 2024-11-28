@@ -1,8 +1,10 @@
 package com.project.shopapp.controller;
 
+import com.project.shopapp.dto.CategoryDTO;
 import com.project.shopapp.dto.ProductDTO;
 import com.project.shopapp.dto.ProductImageDTO;
 import com.project.shopapp.dto.UploadFileDTO;
+import com.project.shopapp.entity.Category;
 import com.project.shopapp.entity.Product;
 import com.project.shopapp.entity.ProductImage;
 import com.project.shopapp.exception.AppException;
@@ -11,6 +13,7 @@ import com.project.shopapp.mapper.ProductMapper;
 import com.project.shopapp.response.ApiResponse;
 import com.project.shopapp.response.ProductListResponse;
 import com.project.shopapp.response.ProductResponse;
+import com.project.shopapp.service.CategoryService;
 import com.project.shopapp.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -116,41 +121,6 @@ public class ProductController {
         PageRequest pageRequest = PageRequest.of(page,limit, Sort.by("createdAt").descending());
 
         Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
-        int totalPages = productPage.getTotalPages();
-        List<ProductResponse> products = productPage.getContent();
-        return ResponseEntity.ok(ApiResponse.builder()
-                .success(true)
-                .payload(ProductListResponse.builder()
-                        .products(products)
-                        .totalPages(totalPages)
-                        .build())
-                .build());
-    }
-
-    @GetMapping("/categories/{category_id}/brands/{brand_id}")
-    ResponseEntity<?> getProductsByCategoryIdAndBrandId(
-            @PathVariable("category_id") Long categoryId, @PathVariable("brand_id") Long brandId,
-            @RequestParam("page") int page, @RequestParam("limit") int limit){
-
-        PageRequest pageRequest = PageRequest.of(page,limit);
-
-        Page<ProductResponse> productPage = productService.getProductsByCategoryIdAndBrandId(categoryId, brandId,pageRequest);
-        int totalPages = productPage.getTotalPages();
-        List<ProductResponse> products = productPage.getContent();
-        return ResponseEntity.ok(ApiResponse.builder()
-                .success(true)
-                .payload(ProductListResponse.builder()
-                        .products(products)
-                        .totalPages(totalPages)
-                        .build())
-                .build());
-    }
-
-    @GetMapping("/brands/{brand_id}")
-    ResponseEntity<?> getProductsByBrandId(
-            @PathVariable("brand_id") Long brandId,
-            @RequestParam("page") int page, @RequestParam("limit") int limit){
-        Page<ProductResponse> productPage = productService.getProductsByBrandId(brandId,page, limit);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
         return ResponseEntity.ok(ApiResponse.builder()
