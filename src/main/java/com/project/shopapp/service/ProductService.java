@@ -70,7 +70,7 @@ public class ProductService implements IProductService{
                 .price(product.getPrice())
                 .thumbnail(product.getThumbnail())
                 .description(product.getDescription())
-                .categoryId(product.getCategory().getId())
+                .category(product.getCategory())
                 .productImages(productImageRepository.findByProductId(productId))
                 .sizes(productSizeRepository.findByProductId(productId))
                 .build();

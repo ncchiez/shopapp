@@ -25,9 +25,19 @@ spring:
 
 outbound:
   identity:
-    client-id: id
-    client-secret: secret
+    client-id: "id"
+    client-secret: "secret"
     redirect-uri: "http://localhost:3000/authenticate"
+
+payment:
+  vnPay:
+    url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+    returnUrl: "http://localhost:3000/authenticate"
+    tmnCode: "tmnCode"
+    secretKey: "secretKey"
+    version: "2.1.0"
+    command: "pay"
+    orderType: "order-type"
 
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"

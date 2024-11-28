@@ -175,8 +175,10 @@ public class AuthenticationService {
                                 .active(true)
                         .build()));
 
+        var token = generateToken(user);
+
         return AuthenticationResponse.builder()
-                .token(response.getAccessToken())
+                .token(token)
                 .build();
     }
 
