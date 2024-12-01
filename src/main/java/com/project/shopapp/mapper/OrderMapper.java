@@ -15,6 +15,9 @@ public interface OrderMapper {
     Order toOrder(OrderDTO orderDTO);
 
     OrderResponse toOrderResponse(Order order);
+
+//    @Mapping(target = "order_detail", ignore = true)
+//    @Mapping(target = "payment_method", ignore = true)
     void updateOrder(@MappingTarget Order order, OrderDTO orderDTO);
 
     List<OrderResponse> toListOrderResponses(List<Order> orders);

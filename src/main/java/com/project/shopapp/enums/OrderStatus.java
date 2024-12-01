@@ -1,4 +1,4 @@
-package com.project.shopapp.entity;
+package com.project.shopapp.enums;
 
 public class OrderStatus {
     public static final String PENDING = "pending";

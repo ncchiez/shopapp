@@ -3,22 +3,17 @@ package com.project.shopapp.service;
 import com.project.shopapp.dto.ProductDTO;
 import com.project.shopapp.dto.ProductImageDTO;
 import com.project.shopapp.dto.ProductSizeDTO;
-import com.project.shopapp.entity.Category;
-import com.project.shopapp.entity.Product;
-import com.project.shopapp.entity.ProductImage;
-import com.project.shopapp.entity.ProductSize;
+import com.project.shopapp.entity.*;
 import com.project.shopapp.exception.AppException;
 import com.project.shopapp.exception.ErrorCode;
 import com.project.shopapp.mapper.ProductMapper;
-import com.project.shopapp.repository.CategoryRepository;
-import com.project.shopapp.repository.ProductImageRepository;
-import com.project.shopapp.repository.ProductRepository;
-import com.project.shopapp.repository.ProductSizeRepository;
+import com.project.shopapp.repository.*;
 import com.project.shopapp.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,12 +34,15 @@ public class ProductService implements IProductService{
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final BrandRepository brandRepository;
     private final ProductMapper productMapper;
 
     @Override
     public Product createProduct(ProductDTO productDTO) {
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Brand existingBrand = brandRepository.findById(productDTO.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
         if(productRepository.existsByName(productDTO.getName()))
             throw new AppException(ErrorCode.PRODUCT_EXISTED);
 
@@ -54,6 +52,7 @@ public class ProductService implements IProductService{
                 .thumbnail(productDTO.getThumbnail())
                 .description(productDTO.getDescription())
                 .category(existingCategory)
+                .brand(existingBrand)
                 .build();
 
         return productRepository.save(newProduct);
@@ -66,6 +65,7 @@ public class ProductService implements IProductService{
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         return ProductResponse.builder()
+                .id(productId)
                 .name(product.getName())
                 .price(product.getPrice())
                 .thumbnail(product.getThumbnail())
@@ -97,12 +97,15 @@ public class ProductService implements IProductService{
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
                         .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Brand existingBrand = brandRepository.findById(productDTO.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
 
         existingProduct.setName(productDTO.getName());
         existingProduct.setCategory(existingCategory);
         existingProduct.setPrice(productDTO.getPrice());
         existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setThumbnail(productDTO.getThumbnail());
+        existingProduct.setBrand(existingBrand);
 
         return productRepository.save(existingProduct);
     }
@@ -130,6 +133,16 @@ public class ProductService implements IProductService{
         }
 
         return productImageRepository.save(productImage);
+    }
+
+    @Override
+    public Page<ProductResponse> getProductsByBrandId(Long brandId, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return productRepository.findByBrandId(brandId, pageable).map(ProductResponse::fromProduct);
+    }
+    @Override
+    public Page<ProductResponse> getProductsByCategoryIdAndBrandId(Long categoryId, Long brandId, PageRequest pageRequest) {
+        return productRepository.findByCategoryIdAndBrandId(categoryId, brandId, pageRequest).map(ProductResponse::fromProduct);
     }
 
     public void convertThumbnail(ProductImage productImage, Product product){

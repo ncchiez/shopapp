@@ -1,29 +1,23 @@
 package com.project.shopapp.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.Date;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "orders")
-public class Order {
+@Table(name = "temporary_order")
+public class TemporaryOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @Column(name = "fullname", length = 100)
     private String fullName;
@@ -40,33 +34,19 @@ public class Order {
     @Column(name = "note", length = 100)
     private String note;
 
-    @Column(name = "order_date")
-    private Date orderDate;
-
-    @Column(name = "status")
-    private String status;
-
-    @Column(name = "shipping_cost")
-    private Double shippingCost;
-
     @Column(name = "shipping_method", length = 100)
     private String shippingMethod;
-
-    @Column(name = "shipping_date")
-    private LocalDate shippingDate;
-
-//    @Column(name = "tracking_number", length = 100)
-//    private String trackingNumber;
 
     @Column(name = "payment_method", length = 100)
     private String paymentMethod;
 
-    @Column(name = "total_money")
-    private Double totalMoney;
+    @Column(name = "product_id")
+    private Long productId;
 
-    @Column(name = "payment_status")
-    private String paymentStatus;
+    private Integer size;
 
-    @Column(name = "active")
-    private boolean active; // thuộc quyền admin
+    private Integer quantity;
+
+    @Column(name = "is_buy_now")
+    private boolean isBuyNow;
 }

@@ -18,4 +18,6 @@ public interface IProductService {
     Product updateProduct(long productId, ProductDTO productDTO);
     void deleteProduct(long productId);
     public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO);
+    Page<ProductResponse> getProductsByBrandId(Long brandId, int page, int limit);
+    Page<ProductResponse> getProductsByCategoryIdAndBrandId(Long categoryId, Long brandId, PageRequest pageRequest);
 }

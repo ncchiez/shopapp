@@ -131,6 +131,37 @@ public class ProductController {
                         .build())
                 .build());
     }
+    @GetMapping("/categories/{category_id}/brands/{brand_id}")
+    ResponseEntity<?> getProductsByCategoryIdAndBrandId(
+            @PathVariable("category_id") Long categoryId, @PathVariable("brand_id") Long brandId,
+            @RequestParam("page") int page, @RequestParam("limit") int limit){
+        PageRequest pageRequest = PageRequest.of(page,limit);
+        Page<ProductResponse> productPage = productService.getProductsByCategoryIdAndBrandId(categoryId, brandId,pageRequest);
+        int totalPages = productPage.getTotalPages();
+        List<ProductResponse> products = productPage.getContent();
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .payload(ProductListResponse.builder()
+                        .products(products)
+                        .totalPages(totalPages)
+                        .build())
+                .build());
+    }
+    @GetMapping("/brands/{brand_id}")
+    ResponseEntity<?> getProductsByBrandId(
+            @PathVariable("brand_id") Long brandId,
+            @RequestParam("page") int page, @RequestParam("limit") int limit){
+        Page<ProductResponse> productPage = productService.getProductsByBrandId(brandId,page, limit);
+        int totalPages = productPage.getTotalPages();
+        List<ProductResponse> products = productPage.getContent();
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .payload(ProductListResponse.builder()
+                        .products(products)
+                        .totalPages(totalPages)
+                        .build())
+                .build());
+    }
     /**
      Xem ảnh
      **/

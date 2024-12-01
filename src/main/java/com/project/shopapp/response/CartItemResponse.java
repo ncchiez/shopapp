@@ -1,6 +1,7 @@
 package com.project.shopapp.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.shopapp.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +14,10 @@ import java.util.function.DoubleUnaryOperator;
 @NoArgsConstructor
 @Builder
 public class CartItemResponse {
+    private Long id;
     private String thumbnail;
-    @JsonProperty("product_name")
-    private String productName;
+    @JsonProperty("product_id")
+    private Product product;
     private Integer size;
     @JsonProperty("unit_price")
     private Double unitPrice;

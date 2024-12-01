@@ -26,14 +26,14 @@ spring:
 outbound:
   identity:
     client-id: "id"
-    client-secret: "secret"
+    client-secret: "secretKey"
     redirect-uri: "http://localhost:3000/authenticate"
 
 payment:
   vnPay:
     url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-    returnUrl: "http://localhost:3000/authenticate"
-    tmnCode: "tmnCode"
+    returnUrl: "http://localhost:8080/payment/vn-pay-callback"
+    tmnCode: "id"
     secretKey: "secretKey"
     version: "2.1.0"
     command: "pay"

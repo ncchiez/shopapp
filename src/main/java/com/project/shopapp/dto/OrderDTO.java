@@ -1,6 +1,7 @@
 package com.project.shopapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.shopapp.response.OrderConfirmResponse;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -50,7 +51,7 @@ public class OrderDTO {
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @JsonProperty("cart_items")
-    private List<CartItemDTO> cartItems;
+    @JsonProperty("order_item")
+    private CartItemDTO cartItemDTO;
 
 }

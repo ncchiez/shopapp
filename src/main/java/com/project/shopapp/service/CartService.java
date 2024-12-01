@@ -103,6 +103,35 @@ public class CartService {
         cartItemRepository.delete(cartItem);
     }
 
+    public void removeItemFromCartById(Long cartItemId) {
+        Cart cart = cartRepository.findByUserId(getUserByEmail().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXIST));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+        cartItemRepository.delete(cartItem);
+    }
+
+    public CartItemResponse updateCartItem(Long cartItemId, CartItemDTO cartItemDTO) {
+        Cart cart = cartRepository.findByUserId(getUserByEmail().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXIST));
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        Product product = productRepository.findById(cartItemDTO.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+
+        ProductSize productSize = productSizeRepository.findByProductIdAndSize(cartItemDTO.getProductId(), cartItemDTO.getSize())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
+        if (productSize.getNumberOfSizes() < cartItemDTO.getQuantity())
+            throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
+        cartItem.setSize(cartItemDTO.getSize());
+        cartItem.setQuantity(cartItemDTO.getQuantity());
+
+        return cartItemRepository.save(cartItem).toCartItemResponse(cartItem);
+    }
+
     private User getUserByEmail(){
         User user = userRepository.findByEmail(getEmailFromAuthentication())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

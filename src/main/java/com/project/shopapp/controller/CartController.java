@@ -43,24 +43,50 @@ public class CartController {
      Lấy 1 sản phẩm trong giỏ bằng id
      **/
     @GetMapping("/{cart_item_id}")
-    public ResponseEntity<?> getCartItemById(@PathVariable("cart_item_id") Long cartItemId) {
+    public ApiResponse<?> getCartItemById(@PathVariable("cart_item_id") Long cartItemId) {
 
-        return ResponseEntity.ok(cartService.getCartItemById(cartItemId));
+        return ApiResponse.builder()
+                .success(true)
+                .payload(cartService.getCartItemById(cartItemId))
+                .build();
+    }
+
+    @PutMapping("/{cart_item_id}")
+    public ApiResponse<?> UpdateCartItemById(@PathVariable("cart_item_id") Long cartItemId, @RequestBody CartItemDTO cartItemDTO) {
+
+        return ApiResponse.builder()
+                .success(true)
+                .payload(cartService.updateCartItem(cartItemId, cartItemDTO))
+                .build();
     }
 
     // Xóa tất cả sản phẩm khỏi giỏ hàng
     @DeleteMapping("/clear")
-    public ResponseEntity<String> clearCart() {
+    public ApiResponse<?> clearCart() {
         cartService.clearCart();
-        return ResponseEntity.ok("Cart cleared successfully");
+        return ApiResponse.builder()
+                .success(true)
+                .payload("Cart cleared successfully")
+                .build();
     }
 
     // Xóa một sản phẩm khỏi giỏ hàng
     @DeleteMapping()
-    public ResponseEntity<String> removeItemFromCart(@RequestParam Long productId, @RequestParam Integer size) {
-        cartService.removeItemFromCart(productId, size);
-        return ResponseEntity.ok("Product removed from cart successfully");
+    public ApiResponse<?> removeItemFromCartById(@RequestParam Long cartItemId) {
+        cartService.removeItemFromCartById(cartItemId);
+        return ApiResponse.builder()
+                .success(true)
+                .payload("Product removed from cart successfully")
+                .build();
     }
 
+//    @DeleteMapping()
+//    public ApiResponse<?> removeItemFromCart(@RequestParam Long productId, @RequestParam Integer size) {
+//        cartService.removeItemFromCart(productId, size);
+//        return ApiResponse.builder()
+//                .success(true)
+//                .payload("Product removed from cart successfully")
+//                .build();
+//    }
 
 }

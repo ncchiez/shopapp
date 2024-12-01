@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ProductSizeResponse {
+    private Long id;
     private Integer size;
     @JsonProperty("number_of_sizes")
     private Integer numberOfSizes;

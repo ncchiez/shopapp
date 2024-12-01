@@ -40,8 +40,9 @@ public class CartItem {
 
     public CartItemResponse toCartItemResponse(CartItem cartItem){
         return CartItemResponse.builder()
+                .id(cartItem.getId())
                 .thumbnail(cartItem.getProduct().getThumbnail())
-                .productName(cartItem.getProduct().getName())
+                .product(cartItem.getProduct())
                 .size(cartItem.getSize())
                 .unitPrice(cartItem.getProduct().getPrice())
                 .quantity(cartItem.getQuantity())

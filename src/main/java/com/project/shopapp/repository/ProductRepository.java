@@ -10,5 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByName(String name);
     Page<Product> findAll(Pageable pageable);
-
+    // Tìm sản phẩm theo tên hãng
+    Page<Product> findByBrandId(Long brandId, Pageable pageable);
+    // Tìm sản phẩm theo tên hãng và loại
+    Page<Product> findByCategoryIdAndBrandId(Long categoryId, Long brandId, Pageable pageable);
 }

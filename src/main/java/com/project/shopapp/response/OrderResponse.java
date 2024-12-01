@@ -22,44 +22,49 @@ public class OrderResponse{
 //    @JsonProperty("user_id")
 //    private String userId;
 
-    @Column(name = "fullname")
+    @JsonProperty("fullname")
     private String fullName;
 
-    @Column(name = "email")
+    @JsonProperty("email")
     private String email;
 
-    @Column(name = "phone_number")
+    @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @Column(name = "shipping_address")
+    @JsonProperty("shipping_address")
     private String shippingAddress;
 
     @JsonProperty("order_details")
     private List<OrderDetailResponse> orderDetailResponses;
 
-    @Column(name = "note")
+    @JsonProperty("note")
     private String note;
 
-    @Column(name = "order_date")
+    @JsonProperty("order_date")
     private Date orderDate;
 
-    @Column(name = "status")
+    @JsonProperty("status")
     private String status;
 
-    @Column(name = "shipping_method")
+    @JsonProperty("shipping_method")
     private String shippingMethod;
 
-    @Column(name = "shipping_cost")
+    @JsonProperty("shipping_cost")
     private Double shippingCost;
 
-    @Column(name = "shipping_date")
+    @JsonProperty("shipping_date")
     private LocalDate shippingDate;
 
-    @Column(name = "payment_method")
+    @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @Column(name = "total_money")
+    @JsonProperty("payment_status")
+    private String paymentStatus;
+
+    @JsonProperty("total_money")
     private Float totalMoney;
+
+
 
 //    @Column(name = "active")
 //    private Boolean active;

@@ -1,6 +1,7 @@
 package com.project.shopapp.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.shopapp.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class OrderDetailResponse {
-//    private Long id;
+    private Long id;
 //
 //    @JsonProperty("order_id")
 //    private Long orderId;
@@ -20,8 +21,8 @@ public class OrderDetailResponse {
 //    private Long productId;
 
     private String thumbnail;
-    @JsonProperty("product_name")
-    private String productName;
+    @JsonProperty("product_id")
+    private Product product;
     private Integer size;
     @JsonProperty("unit_price")
     private Double unitPrice;

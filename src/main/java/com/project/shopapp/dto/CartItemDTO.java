@@ -15,4 +15,6 @@ public class CartItemDTO {
     private Long productId;
     private Integer size;
     private Integer quantity;
+    @JsonProperty("is_buy_now")
+    private boolean isBuyNow;
 }
