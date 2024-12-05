@@ -26,6 +26,9 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    /**
+     Đặt hàng COD
+     **/
     @PostMapping("/checkout")
     ApiResponse createOrder(@RequestBody @Valid OrderDTO orderDTO){
 
@@ -34,9 +37,11 @@ public class OrderController {
                 .payload(orderService.createOrderCOD(orderDTO))
                 .build();
     }
-
-    @GetMapping("/order")
-    ResponseEntity<?> getOrderConfirm(CartItemDTO cartItemDTO){
+    /**
+     Xác nhận đơn
+     **/
+    @PostMapping("/order")
+    ResponseEntity<?> getOrderConfirm(@RequestBody @Valid CartItemDTO cartItemDTO){
         OrderConfirmResponse orderConfirmResponse = orderService.getOrderConfirm(cartItemDTO);
         return ResponseEntity.ok(ApiResponse.builder()
                 .success(true)

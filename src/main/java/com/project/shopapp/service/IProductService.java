@@ -20,4 +20,5 @@ public interface IProductService {
     public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO);
     Page<ProductResponse> getProductsByBrandId(Long brandId, int page, int limit);
     Page<ProductResponse> getProductsByCategoryIdAndBrandId(Long categoryId, Long brandId, PageRequest pageRequest);
+    Page<ProductResponse> searchProductsByName(String name, PageRequest pageRequest);
 }

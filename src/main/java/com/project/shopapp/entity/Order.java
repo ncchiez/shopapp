@@ -34,10 +34,10 @@ public class Order {
     @Column(name = "phone_number", length = 20, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "shipping_address", length = 200, nullable = false)
+    @Column(name = "shipping_address", length = 1000, nullable = false)
     private String shippingAddress;
 
-    @Column(name = "note", length = 100)
+    @Column(name = "note", length = 500)
     private String note;
 
     @Column(name = "order_date")

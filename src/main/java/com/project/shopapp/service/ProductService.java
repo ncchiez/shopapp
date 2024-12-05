@@ -71,6 +71,7 @@ public class ProductService implements IProductService{
                 .thumbnail(product.getThumbnail())
                 .description(product.getDescription())
                 .category(product.getCategory())
+                .brandId(product.getBrand().getId())
                 .productImages(productImageRepository.findByProductId(productId))
                 .sizes(productSizeRepository.findByProductId(productId))
                 .build();
@@ -89,6 +90,12 @@ public class ProductService implements IProductService{
     @Override
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
         return productRepository.findAll(pageRequest).map(ProductResponse::fromProduct);
+    }
+
+    @Override
+    public Page<ProductResponse> searchProductsByName(String name, PageRequest pageRequest) {
+        return productRepository.findByNameContainingIgnoreCase(name, pageRequest)
+                .map(ProductResponse::fromProduct);
     }
 
     @Override
