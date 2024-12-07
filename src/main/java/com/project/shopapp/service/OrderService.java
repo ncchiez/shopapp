@@ -1,11 +1,9 @@
 package com.project.shopapp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.shopapp.dto.CartItemDTO;
 import com.project.shopapp.dto.OrderDTO;
 import com.project.shopapp.entity.*;
 import com.project.shopapp.enums.OrderStatus;
-import com.project.shopapp.enums.PaymentMethod;
 import com.project.shopapp.enums.PaymentStatus;
 import com.project.shopapp.exception.AppException;
 import com.project.shopapp.exception.ErrorCode;
@@ -14,7 +12,6 @@ import com.project.shopapp.repository.*;
 import com.project.shopapp.response.OrderConfirmResponse;
 import com.project.shopapp.response.OrderDetailResponse;
 import com.project.shopapp.response.OrderResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -242,6 +239,26 @@ public class OrderService implements IOrderService {
                 .sum();
     }
 
+    public String updateStatusOrder(Long orderId, String status){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
+        if(getEmailFromAuthentication().equals("admin")){
+            if(status.equals("CANCELED")){
+                order.setStatus(OrderStatus.CANCELED);
+                order.setActive(false);
+            }else if(status.equals("DELIVERING"))
+                order.setStatus(OrderStatus.DELIVERING);
+            else if(status.equals("SHIPPED"))
+                order.setStatus(OrderStatus.SHIPPED);
+            orderRepository.save(order);
+            return "Cập nhật trạng thái " + status +  " cho đơn hàng thành công";
+        }
+        order.setStatus(OrderStatus.CANCELED);
+        order.setActive(false);
+        orderRepository.save(order);
+        return "Hủy đơn hàng thành công";
+    }
+
     @Override
     public OrderResponse getOrderById(Long id) {
 
@@ -302,6 +319,7 @@ public class OrderService implements IOrderService {
             OrderResponse orderResponse = orderMapper.toOrderResponse(order);
             List<OrderDetailResponse> orderDetailResponses = orderDetailRepository.findByOrderId(order.getId()).stream()
                     .map(orderDetail -> OrderDetailResponse.builder()
+                            .id(orderDetail.getId())
                             .thumbnail(orderDetail.getProduct().getThumbnail())
                             .product(orderDetail.getProduct())
                             .unitPrice(orderDetail.getProduct().getPrice())

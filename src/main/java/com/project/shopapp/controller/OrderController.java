@@ -95,12 +95,22 @@ public class OrderController {
                 .build());
     }
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteOrder(@PathVariable Long id){
-        orderService.deleteOrder(id);
-        return ResponseEntity.ok(ApiResponse.builder()
+    /**
+     Hủy đơn với user + cập nhật status với admin
+     **/
+    @GetMapping("/update-status/{orderId}")
+    ApiResponse<?> updateStatusOrder(@PathVariable Long orderId, @RequestParam String status){
+        return ApiResponse.builder()
                 .success(true)
-                .payload("Order deleted"));
+                .payload(orderService.updateStatusOrder(orderId, status))
+                .build();
     }
 
+//    @DeleteMapping("/{id}")
+//    ResponseEntity<?> deleteOrder(@PathVariable Long id){
+//        orderService.deleteOrder(id);
+//        return ResponseEntity.ok(ApiResponse.builder()
+//                .success(true)
+//                .payload("Order deleted"));
+//    }
 }

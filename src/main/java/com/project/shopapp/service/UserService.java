@@ -1,6 +1,7 @@
 package com.project.shopapp.service;
 
 
+import com.project.shopapp.dto.ChangePasswordRequest;
 import com.project.shopapp.dto.UserDTO;
 import com.project.shopapp.entity.Role;
 import com.project.shopapp.entity.User;
@@ -11,6 +12,7 @@ import com.project.shopapp.mapper.UserMapper;
 import com.project.shopapp.repository.RoleRepository;
 import com.project.shopapp.repository.UserRepository;
 import com.project.shopapp.response.UserResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,23 +76,54 @@ public class UserService {
         return list.stream().map(userMapper::toUserResponse).toList();
     }
 
+    @Transactional
+    public void changePassword(ChangePasswordRequest request){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
 
+        User user = userRepository.findByEmail(name).orElseThrow(
+                ()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        boolean authentication = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if(!authentication){
+            throw new AppException(ErrorCode.CONFIRM_PASSWORD_WRONG);
+        }
+        if(!request.getRetypePassword().equals(request.getNewPassword()))
+            throw new AppException(ErrorCode.PASSWORD_WRONG);
+        String newEncodedPassword = passwordEncoder.encode(request.getNewPassword());
+
+        user.setPassword(newEncodedPassword);
+        userRepository.save(user);
+    }
+
+    @Transactional
     public UserResponse update(UserDTO request, String id) {
         User user= userRepository.findById(id).orElseThrow(()
                 -> new RuntimeException("user not found !"));
 
-        Set<Role> roles = new HashSet<>();
-        //log.info("Check box role:"+ request.isCheckAdmin());
-//        if(request.isCheckAdmin()){
-//            var role= roleRepository.findByName(ROLE.ADMIN.name());
-//            roles.add(role);
-//            user.setRoles(roles);
-//        }else{
-            var role= roleRepository.findByName(ROLE.USER.name());
-            roles.add(role);
-            user.setRole(role);
-        //}
-        userMapper.updateUser(user,request);
+        String email = request.getEmail();
+        if (!user.getEmail().equals(email)
+                && userRepository.existsByEmail(email)) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getDateOfBirth() != null) {
+            user.setDateOfBirth(request.getDateOfBirth());
+        }
+
+        // update the password
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            String newPassword = passwordEncoder.encode(request.getPassword());
+            user.setPassword(newPassword);
+        }
         //log.info("Role ne : "+user.getRoles().toString());
         return userMapper.toUserResponse(userRepository.save(user));
     }

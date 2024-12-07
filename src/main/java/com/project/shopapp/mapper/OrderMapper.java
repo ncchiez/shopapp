@@ -16,7 +16,7 @@ public interface OrderMapper {
 
     OrderResponse toOrderResponse(Order order);
 
-//    @Mapping(target = "order_detail", ignore = true)
+    //    @Mapping(target = "order_detail", ignore = true)
 //    @Mapping(target = "payment_method", ignore = true)
     void updateOrder(@MappingTarget Order order, OrderDTO orderDTO);
 

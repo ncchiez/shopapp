@@ -56,7 +56,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "User not found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
-    PASSWORD_WRONG(1030, "Mật khẩu không trùng khớp", HttpStatus.BAD_REQUEST),
+    PASSWORD_WRONG(1030, "Mật khẩu mới không trùng khớp", HttpStatus.BAD_REQUEST),
+    CONFIRM_PASSWORD_WRONG(1034, "Sai mật khẩu", HttpStatus.BAD_REQUEST),
     NAME_REQUIRED(1032, "Vui lòng nhập tên", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1033, "Please enter a valid email, containing '@' and a domain (e.g., user@example.com).", HttpStatus.BAD_REQUEST),
             ;

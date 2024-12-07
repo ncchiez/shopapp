@@ -128,7 +128,7 @@ public class CartService {
             throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
         cartItem.setSize(cartItemDTO.getSize());
         cartItem.setQuantity(cartItemDTO.getQuantity());
-        cartItem.setTotalPrice(cartItem.getTotalPrice() + (cartItemDTO.getQuantity() * product.getPrice()));
+        cartItem.setTotalPrice(cartItemDTO.getQuantity() * product.getPrice());
         return cartItemRepository.save(cartItem).toCartItemResponse(cartItem);
     }
 

@@ -1,6 +1,7 @@
 package com.project.shopapp.controller;
 
 
+import com.project.shopapp.dto.ChangePasswordRequest;
 import com.project.shopapp.dto.UserDTO;
 import com.project.shopapp.entity.User;
 import com.project.shopapp.repository.UserRepository;
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<UserResponse> updateUser(@ModelAttribute UserDTO request, @PathVariable String id){
+    public ApiResponse<UserResponse> updateUser(@RequestBody UserDTO request, @PathVariable String id){
 
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setSuccess(true);
@@ -75,6 +76,15 @@ public class UserController {
         apiResponse.setPayload(userRes);
 
         return apiResponse;
+    }
+
+    @PostMapping("/my-info/change-password")
+    public ApiResponse<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ApiResponse.builder()
+                .success(true)
+                .payload("Đổi mật khẩu thành công!!!")
+                .build();
     }
 
 
