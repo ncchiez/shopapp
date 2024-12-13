@@ -33,8 +33,8 @@ payment:
   vnPay:
     url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
     returnUrl: "http://localhost:8080/payment/vn-pay-callback"
-    tmnCode: "id"
-    secretKey: "secretKey"
+    tmnCode: ""
+    secretKey: ""
     version: "2.1.0"
     command: "pay"
     orderType: "order-type"

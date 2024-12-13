@@ -34,10 +34,12 @@ public class PaymentController {
     }
 
     @GetMapping("/vn-pay-callback")
-    public ApiResponse<?> handleVnPayCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return ApiResponse.builder()
-                .success(true)
-                .payload(paymentService.getCallBack(request, response))
-                .build();
+    public void handleVnPayCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        paymentService.getCallBack(request,response);
+    }
+
+    @GetMapping("/test")
+    public String test(HttpServletRequest request){
+        return request.getParameter(request.getParameter("code"));
     }
 }

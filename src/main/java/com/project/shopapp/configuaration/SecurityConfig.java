@@ -35,9 +35,10 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENPOINTS = {"/categories/{id}", "/categories",
             "/brands", "/brands/**",
             "/products", "/products/**",
-            "/users", "/users/register",
-            "/auth/login", "/auth/introspect","/auth/logout", "/auth/refresh", "/auth/outbound/authentication",
+            "/users/register",
+            "/auth/**",
             "/payment/vn-pay-callback",
+            "/payment/test",
     };
     @Autowired
     private CustomJwtDecoder customJwtDecoder;

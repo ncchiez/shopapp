@@ -22,6 +22,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -72,8 +73,9 @@ public class PaymentService {
         return paymentUrl;
     }
 
-    public VNPayResponse getCallBack(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+    public void getCallBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String transactionStatus = request.getParameter("vnp_ResponseCode");
+        String redirectUrl;
 
         BigDecimal amountInVNPay = new BigDecimal(request.getParameter("vnp_Amount"));
         BigDecimal actualAmount = amountInVNPay.divide(new BigDecimal(100));
@@ -99,27 +101,16 @@ public class PaymentService {
                     .paymentMethod(temporaryOrder.getPaymentMethod())
                     .cartItemDTO(new CartItemDTO(temporaryOrder.getProductId(),temporaryOrder.getSize(),temporaryOrder.getQuantity(),temporaryOrder.isBuyNow()))
                     .build(), refParts[0]);
-            return VNPayResponse.builder()
-                    .code(transactionStatus)
-                    .message("Thanh toán thành công!!")
-                    .amount(actualAmount)
-                    .bankTranNo(bankTranNo)
-                    .payDate(payDate)
-                    .build();
+            redirectUrl = "http://localhost:5173/account/orders?code=00";
         }
         else if ("24".equals(transactionStatus)) {
             temporaryOrderRepository.deleteAll();
-            return VNPayResponse.builder()
-                    .code(transactionStatus)
-                    .message("Thanh toán đã bị hủy!!")
-                    .build();
+            redirectUrl = "http://localhost:5173/account/orders?code=24";
         } else {
             temporaryOrderRepository.deleteAll();
-            return VNPayResponse.builder()
-                    .code(transactionStatus)
-                    .message("Thanh toán thất bại")
-                    .build();
+            redirectUrl = "http://localhost:5173/account/orders?code=01";
         }
+        response.sendRedirect(redirectUrl);
     }
 
     public static String extractIPAddress(HttpServletRequest request) {
