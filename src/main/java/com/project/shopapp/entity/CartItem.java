@@ -29,6 +29,9 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product; // Sản phẩm trong giỏ hàng
 
+    @Column(name = "color", nullable = false)
+    private String color;
+
     @Column(name = "size", nullable = false)
     private Integer size; // Kích thước sản phẩm
 
@@ -39,12 +42,19 @@ public class CartItem {
     private Double totalPrice;
 
     public CartItemResponse toCartItemResponse(CartItem cartItem){
+        Double price;
+        if(cartItem.getProduct().getIsSale()){
+            price = cartItem.getProduct().getDiscountedPrice();
+        }else {
+            price = cartItem.getProduct().getPrice();
+        }
         return CartItemResponse.builder()
                 .id(cartItem.getId())
                 .thumbnail(cartItem.getProduct().getThumbnail())
                 .product(cartItem.getProduct())
+                .color(cartItem.getColor())
                 .size(cartItem.getSize())
-                .unitPrice(cartItem.getProduct().getPrice())
+                .unitPrice(price)
                 .quantity(cartItem.getQuantity())
                 .totalPrice(cartItem.totalPrice)
                 .build();

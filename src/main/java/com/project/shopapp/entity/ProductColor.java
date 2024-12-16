@@ -7,24 +7,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "product_images")
-public class ProductImage {
-    public static final int MAXIMUM_IMAGES_PER_PRODUCT = 100;
-
+@Table(name = "product_colors")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProductColor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     @JsonBackReference
     private Product product;
 
-    @Column(name = "image_url", length = 300)
-    private String imageUrl;
+    @Column(name = "color", length = 50, nullable = false)
+    private String color;
 }

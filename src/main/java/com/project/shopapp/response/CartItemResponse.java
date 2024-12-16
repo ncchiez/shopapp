@@ -18,6 +18,7 @@ public class CartItemResponse {
     private String thumbnail;
     @JsonProperty("product_id")
     private Product product;
+    private String color;
     private Integer size;
     @JsonProperty("unit_price")
     private Double unitPrice;

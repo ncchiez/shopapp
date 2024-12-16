@@ -73,6 +73,7 @@ public class ProductSizeService {
 
         for (ProductSize productSize : productSizes){
             ProductSizeResponse productSizeResponse = new ProductSizeResponse();
+            productSizeResponse.setId(productSize.getId());
             productSizeResponse.setSize(productSize.getSize());
             productSizeResponse.setNumberOfSizes(productSize.getNumberOfSizes());
             productSizeResponse.setProductId(productSize.getProduct().getId());

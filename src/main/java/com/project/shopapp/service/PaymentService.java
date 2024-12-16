@@ -54,6 +54,7 @@ public class PaymentService {
         temporaryOrder.setPaymentMethod(orderDTO.getPaymentMethod());
         temporaryOrder.setNote(orderDTO.getNote());
         temporaryOrder.setProductId(orderDTO.getCartItemDTO().getProductId());
+        temporaryOrder.setColor(orderDTO.getCartItemDTO().getColor());
         temporaryOrder.setSize(orderDTO.getCartItemDTO().getSize());
         temporaryOrder.setQuantity(orderDTO.getCartItemDTO().getQuantity());
         temporaryOrder.setBuyNow(orderDTO.getCartItemDTO().isBuyNow());
@@ -99,7 +100,7 @@ public class PaymentService {
                     .note(temporaryOrder.getNote())
                     .shippingMethod(temporaryOrder.getShippingMethod())
                     .paymentMethod(temporaryOrder.getPaymentMethod())
-                    .cartItemDTO(new CartItemDTO(temporaryOrder.getProductId(),temporaryOrder.getSize(),temporaryOrder.getQuantity(),temporaryOrder.isBuyNow()))
+                    .cartItemDTO(new CartItemDTO(temporaryOrder.getProductId(), temporaryOrder.getColor(),temporaryOrder.getSize(),temporaryOrder.getQuantity(),temporaryOrder.isBuyNow()))
                     .build(), refParts[0]);
             redirectUrl = "http://localhost:5173/account/orders?code=00";
         }

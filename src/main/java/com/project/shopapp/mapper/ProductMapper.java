@@ -9,9 +9,9 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-    @Mapping(target = "id", ignore = true) // ko map id
-    Product toProduct(ProductDTO productDTO);
-
-    ProductResponse toProductResponse(Product product);
-    void updateProduct(@MappingTarget Product product, ProductDTO productDTO);
+//    @Mapping(target = "id", ignore = true) // ko map id
+//    Product toProduct(ProductDTO productDTO);
+//
+//    ProductResponse toProductResponse(Product product);
+//    void updateProduct(@MappingTarget Product product, ProductDTO productDTO);
 }

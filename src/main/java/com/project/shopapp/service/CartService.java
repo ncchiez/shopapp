@@ -22,6 +22,7 @@ public class CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final ProductColorRepository productColorRepository;
 
     public CartItemResponse addToCart(CartItemDTO cartItemDTO) {
         // Lấy User từ userId (nếu cần thêm thông tin)
@@ -31,6 +32,9 @@ public class CartService {
         // Tìm sản phẩm trong CartItem hoặc tạo mới
         Product product = productRepository.findById(cartItemDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+
+        ProductColor productColor = productColorRepository.findByProductIdAndColor(cartItemDTO.getProductId(), cartItemDTO.getColor())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXIST));
 
         ProductSize productSize = productSizeRepository.findByProductIdAndSize(cartItemDTO.getProductId(), cartItemDTO.getSize())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
@@ -45,14 +49,21 @@ public class CartService {
                 .orElse(CartItem.builder()
                         .cart(cart)
                         .product(product)
+                        .color(productColor.getColor())
                         .size(cartItemDTO.getSize())
                         .quantity(0)
                         .totalPrice((double) 0)
                         .build());
 
         // Cập nhật số lượng
+        Double price;
+        if(product.getIsSale()){
+            price = product.getDiscountedPrice();
+        }else {
+            price = product.getPrice();
+        }
         cartItem.setQuantity(cartItem.getQuantity() + cartItemDTO.getQuantity());
-        cartItem.setTotalPrice(cartItem.getTotalPrice() + (cartItemDTO.getQuantity() * product.getPrice()));
+        cartItem.setTotalPrice(cartItem.getTotalPrice() + (cartItemDTO.getQuantity() * price));
 //        productSize.setNumberOfSizes(productSize.getNumberOfSizes() - cartItemDTO.getQuantity());
 //        productSizeRepository.save(productSize);
         cartItemRepository.save(cartItem);
@@ -122,13 +133,23 @@ public class CartService {
         Product product = productRepository.findById(cartItemDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
+        ProductColor productColor = productColorRepository.findByProductIdAndColor(cartItemDTO.getProductId(), cartItemDTO.getColor())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXIST));
+
         ProductSize productSize = productSizeRepository.findByProductIdAndSize(cartItemDTO.getProductId(), cartItemDTO.getSize())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
         if (productSize.getNumberOfSizes() < cartItemDTO.getQuantity())
             throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
+        Double price;
+        if(product.getIsSale()){
+            price = product.getDiscountedPrice();
+        }else {
+            price = product.getPrice();
+        }
         cartItem.setSize(cartItemDTO.getSize());
         cartItem.setQuantity(cartItemDTO.getQuantity());
-        cartItem.setTotalPrice(cartItemDTO.getQuantity() * product.getPrice());
+        cartItem.setTotalPrice(cartItemDTO.getQuantity() * price);
+        cartItem.setColor(productColor.getColor());
         return cartItemRepository.save(cartItem).toCartItemResponse(cartItem);
     }
 

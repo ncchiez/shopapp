@@ -30,7 +30,7 @@ public enum ErrorCode {
     FILES_IMAGES_TYPE_FAILED(1015, "File must be an image ", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
 
     PRODUCT_SIZE_NOT_EXIST(1026, "Product size not found", HttpStatus.NOT_FOUND),
-
+    PRODUCT_COLOR_NOT_EXIST(1026, "Product color not found", HttpStatus.NOT_FOUND),
     //order
     USER_ID_INVALID(1016, "User's ID must be > 0", HttpStatus.BAD_REQUEST),
     PHONE_NUMBER_IS_NULL(1017, "Phone number is required", HttpStatus.BAD_REQUEST),

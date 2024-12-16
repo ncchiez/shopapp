@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class CartItemDTO {
     @JsonProperty("product_id")
     private Long productId;
+    private String color;
     private Integer size;
     private Integer quantity;
     @JsonProperty("is_buy_now")

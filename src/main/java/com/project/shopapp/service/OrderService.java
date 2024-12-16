@@ -33,6 +33,7 @@ public class OrderService implements IOrderService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final ProductColorRepository productColorRepository;
     private final OrderMapper orderMapper;
     private final TemporaryOrderRepository temporaryOrderRepository;
 
@@ -59,14 +60,24 @@ public class OrderService implements IOrderService {
             // Kiểm tra số lượng sản phẩm
             ProductSize productSize = productSizeRepository.findByProductIdAndSize(orderDTO.getCartItemDTO().getProductId(), orderDTO.getCartItemDTO().getSize())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
+            ProductColor productColor = productColorRepository.findByProductIdAndColor(orderDTO.getCartItemDTO().getProductId(), orderDTO.getCartItemDTO().getColor())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXIST));
+
             if (productSize.getNumberOfSizes() < orderDTO.getCartItemDTO().getQuantity()) {
                 throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
+            }
+            Double price;
+            if(product.getIsSale()){
+                price = product.getDiscountedPrice();
+            }else {
+                price = product.getPrice();
             }
             CartItem cartItem = CartItem.builder()
                     .product(product)
                     .quantity(orderDTO.getCartItemDTO().getQuantity())
+                    .color(orderDTO.getCartItemDTO().getColor())
                     .size(orderDTO.getCartItemDTO().getSize())
-                    .totalPrice(product.getPrice() * orderDTO.getCartItemDTO().getQuantity())
+                    .totalPrice(price * orderDTO.getCartItemDTO().getQuantity())
                     .build();
             cartItems = List.of(cartItem);
         }
@@ -88,6 +99,7 @@ public class OrderService implements IOrderService {
                         .numberOfProducts(cartItem.getQuantity())
                         .totalMoney(cartItem.getTotalPrice())
                         .product(cartItem.getProduct())
+                        .color(cartItem.getColor())
                         .build())
                 .collect(Collectors.toList());
 
@@ -122,21 +134,30 @@ public class OrderService implements IOrderService {
             // Kiểm tra số lượng sản phẩm
             ProductSize productSize = productSizeRepository.findByProductIdAndSize(orderDTO.getCartItemDTO().getProductId(), orderDTO.getCartItemDTO().getSize())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
+            ProductColor productColor = productColorRepository.findByProductIdAndColor(orderDTO.getCartItemDTO().getProductId(), orderDTO.getCartItemDTO().getColor())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXIST));
             if (productSize.getNumberOfSizes() < orderDTO.getCartItemDTO().getQuantity()) {
                 throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
+            }
+            Double price;
+            if(product.getIsSale()){
+                price = product.getDiscountedPrice();
+            }else {
+                price = product.getPrice();
             }
             CartItem cartItem = CartItem.builder()
                     .product(product)
                     .quantity(orderDTO.getCartItemDTO().getQuantity())
+                    .color(orderDTO.getCartItemDTO().getColor())
                     .size(orderDTO.getCartItemDTO().getSize())
-                    .totalPrice(product.getPrice() * orderDTO.getCartItemDTO().getQuantity())
+                    .totalPrice(price * orderDTO.getCartItemDTO().getQuantity())
                     .build();
             cartItems = List.of(cartItem);
         }
         Order order = orderMapper.toOrder(orderDTO);
         order.setUser(user);
         order.setOrderDate(new Date());
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.AWAITING);
         order.setShippingCost(30000.0);
         order.setTotalMoney(calculateTotalMoney(cartItems) + 30000.0);
         order.setShippingDate(LocalDate.now().plusDays(3));
@@ -150,6 +171,7 @@ public class OrderService implements IOrderService {
                         .numberOfProducts(cartItem.getQuantity())
                         .totalMoney(cartItem.getTotalPrice())
                         .product(cartItem.getProduct())
+                        .color(cartItem.getColor())
                         .build())
                 .collect(Collectors.toList());
 
@@ -166,6 +188,7 @@ public class OrderService implements IOrderService {
     public OrderConfirmResponse getOrderConfirm(CartItemDTO cartItemDTO){
         User user = userRepository.findByEmail(getEmailFromAuthentication())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
         if(!cartItemDTO.isBuyNow()){
             Cart cart = cartRepository.findByUserId(user.getId())
                     .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXIST));
@@ -181,13 +204,15 @@ public class OrderService implements IOrderService {
                             .numberOfProducts(cartItem.getQuantity())
                             .totalMoney(cartItem.getTotalPrice())
                             .product(cartItem.getProduct())
+                            .color(cartItem.getColor())
                             .build())
                     .collect(Collectors.toList());
             List<OrderDetailResponse> orderDetailResponses = orderDetails.stream()
                     .map(orderDetail -> OrderDetailResponse.builder()
                             .thumbnail(orderDetail.getProduct().getThumbnail())
                             .product(orderDetail.getProduct())
-                            .unitPrice(orderDetail.getProduct().getPrice())
+                            .color(orderDetail.getColor())
+                            .unitPrice(orderDetail.getProduct().getIsSale()?orderDetail.getProduct().getDiscountedPrice():orderDetail.getProduct().getPrice())
                             .quantity(orderDetail.getNumberOfProducts())
                             .size(orderDetail.getSize())
                             .totalPrice(orderDetail.getTotalMoney())
@@ -204,19 +229,27 @@ public class OrderService implements IOrderService {
 
             ProductSize productSize = productSizeRepository.findByProductIdAndSize(cartItemDTO.getProductId(), cartItemDTO.getSize())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_SIZE_NOT_EXIST));
+            ProductColor productColor = productColorRepository.findByProductIdAndColor(cartItemDTO.getProductId(), cartItemDTO.getColor())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXIST));
             if (productSize.getNumberOfSizes() < cartItemDTO.getQuantity())
                 throw new AppException(ErrorCode.INSUFFICIENT_QUANTITY);
-
+            Double price;
+            if(product.getIsSale()){
+                price = product.getDiscountedPrice();
+            }else {
+                price = product.getPrice();
+            }
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setProduct(product);
             orderDetail.setNumberOfProducts(cartItemDTO.getQuantity());
             orderDetail.setSize(cartItemDTO.getSize());
-            orderDetail.setTotalMoney(product.getPrice() * cartItemDTO.getQuantity());
+            orderDetail.setTotalMoney(price * cartItemDTO.getQuantity());
 
             OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
             orderDetailResponse.setThumbnail(orderDetail.getProduct().getThumbnail());
             orderDetailResponse.setProduct(orderDetail.getProduct());
-            orderDetailResponse.setUnitPrice(orderDetail.getProduct().getPrice());
+            orderDetailResponse.setColor(orderDetail.getColor());
+            orderDetailResponse.setUnitPrice(price);
             orderDetailResponse.setQuantity(orderDetail.getNumberOfProducts());
             orderDetailResponse.setSize(orderDetail.getSize());
             orderDetailResponse.setTotalPrice(orderDetail.getTotalMoney());
@@ -250,13 +283,18 @@ public class OrderService implements IOrderService {
                 order.setStatus(OrderStatus.DELIVERING);
             else if(status.equals("SHIPPED"))
                 order.setStatus(OrderStatus.SHIPPED);
+            else if(status.equals("AWAITING_PICKUP"))
+                order.setStatus(OrderStatus.AWAITING);
             orderRepository.save(order);
             return "Cập nhật trạng thái " + status +  " cho đơn hàng thành công";
         }
-        order.setStatus(OrderStatus.CANCELED);
-        order.setActive(false);
-        orderRepository.save(order);
-        return "Hủy đơn hàng thành công";
+        else if(order.getStatus().equals("PENDING")){
+            order.setStatus(OrderStatus.CANCELED);
+            order.setActive(false);
+            orderRepository.save(order);
+            return "Hủy đơn hàng thành công";
+        }
+        return "fail";
     }
 
     @Override
@@ -269,6 +307,7 @@ public class OrderService implements IOrderService {
                 .map(orderDetail -> OrderDetailResponse.builder()
                         .thumbnail(orderDetail.getProduct().getThumbnail())
                         .product(orderDetail.getProduct())
+                        .color(orderDetail.getColor())
                         .unitPrice(orderDetail.getProduct().getPrice())
                         .quantity(orderDetail.getNumberOfProducts())
                         .size(orderDetail.getSize())
@@ -322,6 +361,7 @@ public class OrderService implements IOrderService {
                             .id(orderDetail.getId())
                             .thumbnail(orderDetail.getProduct().getThumbnail())
                             .product(orderDetail.getProduct())
+                            .color(orderDetail.getColor())
                             .unitPrice(orderDetail.getProduct().getPrice())
                             .quantity(orderDetail.getNumberOfProducts())
                             .size(orderDetail.getSize())

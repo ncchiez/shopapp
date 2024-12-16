@@ -59,6 +59,14 @@ public class ProductController {
                 .build());
     }
 
+    @GetMapping("/colors/{productId}")
+    ResponseEntity<ApiResponse<?>> getProductSizeByProductId (@PathVariable long productId){
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .payload(productService.getProductColorByProductId(productId))
+                .build());
+    }
     /**
      Create ảnh sau khi đã thêm product
     **/
@@ -121,6 +129,23 @@ public class ProductController {
         PageRequest pageRequest = PageRequest.of(page,limit, Sort.by("createdAt").descending());
 
         Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+        int totalPages = productPage.getTotalPages();
+        List<ProductResponse> products = productPage.getContent();
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .payload(ProductListResponse.builder()
+                        .products(products)
+                        .totalPages(totalPages)
+                        .build())
+                .build());
+    }
+
+    @GetMapping("/Sale")
+    ResponseEntity<?> getProductsSale(@RequestParam("page") int page, @RequestParam("limit") int limit, @RequestParam("is_sale") Boolean isSale){
+
+        PageRequest pageRequest = PageRequest.of(page,limit, Sort.by("createdAt").descending());
+
+        Page<ProductResponse> productPage = productService.getProductsSale(pageRequest, isSale);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
         return ResponseEntity.ok(ApiResponse.builder()

@@ -24,7 +24,7 @@ public class ProductSizeController {
     private final ProductSizeService productSizeService;
 
     @PostMapping("/{id}")
-    ResponseEntity<?> createProduct(@PathVariable long id, @RequestBody @Valid ListProductSizeDTO sizes){
+    ResponseEntity<?> createProductSize(@PathVariable long id, @RequestBody @Valid ListProductSizeDTO sizes){
         List<ProductSize> productSizes = productSizeService.createProductSize(id,sizes);
 
         return ResponseEntity.ok(ApiResponse.builder()

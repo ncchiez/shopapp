@@ -43,6 +43,7 @@ public class TemporaryOrder {
     @Column(name = "product_id")
     private Long productId;
 
+    private String color;
     private Integer size;
 
     private Integer quantity;

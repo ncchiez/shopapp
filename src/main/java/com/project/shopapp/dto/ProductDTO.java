@@ -30,4 +30,9 @@ public class ProductDTO {
 
     @JsonProperty("brand_id")
     private long brandId;
+
+    private List<String> colors;
+
+    @JsonProperty("is_sale")
+    private boolean isSale;
 }

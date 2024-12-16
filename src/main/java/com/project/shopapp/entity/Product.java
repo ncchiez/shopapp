@@ -40,4 +40,12 @@ public class Product extends BaseEntity{
     @JoinColumn(name = "brand_id", nullable = false, foreignKey = @ForeignKey(name = "FK_Product_Brand"))
     private Brand brand;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductColor> colors = new ArrayList<>();
+
+    @Column(name = "is_sale")
+    private Boolean isSale = false;
+
+    @Column(name = "discounted_Price")
+    private Double discountedPrice;
 }

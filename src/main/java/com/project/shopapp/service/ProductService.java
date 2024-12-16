@@ -34,8 +34,10 @@ public class ProductService implements IProductService{
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final ProductColorRepository productColorRepository;
     private final BrandRepository brandRepository;
     private final ProductMapper productMapper;
+    private final Double discountPercentage = 15.0;
 
     @Override
     public Product createProduct(ProductDTO productDTO) {
@@ -53,11 +55,26 @@ public class ProductService implements IProductService{
                 .description(productDTO.getDescription())
                 .category(existingCategory)
                 .brand(existingBrand)
+                .isSale(productDTO.isSale())
                 .build();
+        if(productDTO.isSale()){
+            newProduct.setDiscountedPrice(productDTO.getPrice()* (1 - discountPercentage / 100));
+        }
 
+        List<ProductColor> productColors = productDTO.getColors().stream()
+                .map(color -> ProductColor.builder()
+                        .product(newProduct)
+                        .color(color)
+                        .build())
+                .collect(Collectors.toList());
+
+        newProduct.setColors(productColors);
         return productRepository.save(newProduct);
     }
 
+    public List<ProductColor> getProductColorByProductId(Long productId){
+        return productColorRepository.findByProductId(productId);
+    }
 
     public ProductResponse getProductDetail(long productId) {
 
@@ -68,12 +85,14 @@ public class ProductService implements IProductService{
                 .id(productId)
                 .name(product.getName())
                 .price(product.getPrice())
+                .discountedPrice(product.getDiscountedPrice())
                 .thumbnail(product.getThumbnail())
                 .description(product.getDescription())
                 .category(product.getCategory())
                 .brandId(product.getBrand().getId())
                 .productImages(productImageRepository.findByProductId(productId))
                 .sizes(productSizeRepository.findByProductId(productId))
+                .colors(productColorRepository.findByProductId(productId))
                 .build();
     }
 
@@ -90,6 +109,11 @@ public class ProductService implements IProductService{
     @Override
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
         return productRepository.findAll(pageRequest).map(ProductResponse::fromProduct);
+    }
+
+
+    public Page<ProductResponse> getProductsSale(PageRequest pageRequest, Boolean isSale) {
+        return productRepository.findByIsSale(pageRequest, isSale).map(ProductResponse::fromProduct);
     }
 
     @Override
@@ -113,6 +137,17 @@ public class ProductService implements IProductService{
         existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setThumbnail(productDTO.getThumbnail());
         existingProduct.setBrand(existingBrand);
+        existingProduct.setIsSale(productDTO.isSale());
+        if(productDTO.isSale()){
+            existingProduct.setDiscountedPrice(productDTO.getPrice()* (1 - discountPercentage / 100));
+        }
+        List<ProductColor> productColors = productDTO.getColors().stream()
+                .map(color -> ProductColor.builder()
+                        .product(existingProduct)
+                        .color(color)
+                        .build())
+                .collect(Collectors.toList());
+        existingProduct.setColors(productColors);
 
         return productRepository.save(existingProduct);
     }

@@ -1,10 +1,7 @@
 package com.project.shopapp.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.shopapp.entity.Category;
-import com.project.shopapp.entity.Product;
-import com.project.shopapp.entity.ProductImage;
-import com.project.shopapp.entity.ProductSize;
+import com.project.shopapp.entity.*;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -33,8 +30,15 @@ public class ProductResponse extends BaseResponse{
     @JsonProperty("product_images")
     private List<ProductImage> productImages;
 
+    @JsonProperty("is_sale")
+    private Boolean isSale;
+    @JsonProperty("discounted_price")
+    private Double discountedPrice; // Giá sau giảm
+
     @JsonProperty("sizes")
     private List<ProductSize> sizes;
+    @JsonProperty("colors")
+    private List<ProductColor> colors;
 
     public static ProductResponse fromProduct(Product product) {
         ProductResponse productResponse = ProductResponse.builder()
@@ -45,6 +49,8 @@ public class ProductResponse extends BaseResponse{
                 .description(product.getDescription())
                 .category(product.getCategory())
                 .brandId(product.getBrand().getId())
+                .isSale(product.getIsSale())
+                .discountedPrice(product.getDiscountedPrice())
                 .build();
         productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());

@@ -39,4 +39,7 @@ public class OrderDetail {
 
     @Column(name = "size", length = 20)
     private Integer size;
+
+    @Column(name = "color", length = 50)
+    private String color;
 }
