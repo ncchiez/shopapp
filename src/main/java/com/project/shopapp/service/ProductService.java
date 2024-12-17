@@ -37,7 +37,7 @@ public class ProductService implements IProductService{
     private final ProductColorRepository productColorRepository;
     private final BrandRepository brandRepository;
     private final ProductMapper productMapper;
-    private final Double discountPercentage = 15.0;
+    private final Double discountPercentage = 40.0;
 
     @Override
     public Product createProduct(ProductDTO productDTO) {
@@ -93,6 +93,7 @@ public class ProductService implements IProductService{
                 .productImages(productImageRepository.findByProductId(productId))
                 .sizes(productSizeRepository.findByProductId(productId))
                 .colors(productColorRepository.findByProductId(productId))
+                .isSale(product.getIsSale())
                 .build();
     }
 
