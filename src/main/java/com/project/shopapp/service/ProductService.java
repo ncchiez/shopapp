@@ -183,6 +183,11 @@ public class ProductService implements IProductService{
         Pageable pageable = PageRequest.of(page, limit);
         return productRepository.findByBrandId(brandId, pageable).map(ProductResponse::fromProduct);
     }
+
+    public Page<ProductResponse> getProductsByCategoryId(Long categoryId, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return productRepository.findByCategoryId(categoryId, pageable).map(ProductResponse::fromProduct);
+    }
     @Override
     public Page<ProductResponse> getProductsByCategoryIdAndBrandId(Long categoryId, Long brandId, PageRequest pageRequest) {
         return productRepository.findByCategoryIdAndBrandId(categoryId, brandId, pageRequest).map(ProductResponse::fromProduct);

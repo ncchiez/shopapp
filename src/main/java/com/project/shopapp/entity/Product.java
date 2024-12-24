@@ -30,6 +30,7 @@ public class Product extends BaseEntity{
     @Column(name = "thumbnail", length = 255)
     private String thumbnail;
 
+    @Column(name = "description", length = 1000)
     private String description;
 
     @ManyToOne

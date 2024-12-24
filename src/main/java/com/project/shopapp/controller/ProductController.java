@@ -209,6 +209,21 @@ public class ProductController {
                         .build())
                 .build());
     }
+    @GetMapping("/categories/{category_id}")
+    ResponseEntity<?> getProductsByCategoryId(
+            @PathVariable("category_id") Long categoryId,
+            @RequestParam("page") int page, @RequestParam("limit") int limit){
+        Page<ProductResponse> productPage = productService.getProductsByCategoryId(categoryId,page, limit);
+        int totalPages = productPage.getTotalPages();
+        List<ProductResponse> products = productPage.getContent();
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .payload(ProductListResponse.builder()
+                        .products(products)
+                        .totalPages(totalPages)
+                        .build())
+                .build());
+    }
     /**
      Xem ảnh
      **/

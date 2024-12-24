@@ -11,6 +11,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByName(String name);
     Page<Product> findAll(Pageable pageable);
     Page<Product> findByIsSale(Pageable pageable, Boolean isSale);
+    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
     // Tìm sản phẩm theo tên hãng
     Page<Product> findByBrandId(Long brandId, Pageable pageable);
     // Tìm sản phẩm theo tên hãng và loại
